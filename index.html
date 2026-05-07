@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Calculadora</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+  <title>Zonest Calculator</title>
+  <script src="https://unpkg.com/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
   <style>
     :root[data-theme="dark"] {
       --bg:#0e0e12; --surface:#1a1a24; --surface2:#23232f; --border:#2e2e3e;
@@ -30,98 +30,96 @@
       --hist:#f9f8ff; --tog:#dddaf0; --togk:#6a54f0;
       --ck:#fffff8; --ckb:#e0ddf5;
     }
+
+    img.emoji {
+       height: 1em;
+       width: 1em;
+       margin: 0 .05em 0 .1em;
+       vertical-align: -0.1em;
+    }
+
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 20px 100px;transition:background .3s,color .3s}
+    
+    body{
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:20px 20px 120px;
+      transition:background .3s,color .3s;
+    }
 
     .topbar{width:100%;max-width:400px;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
-    .topbar-title{font-size:13px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+    .topbar-title{font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+    
     .theme-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
-    .theme-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);transition:color .3s}
-    .toggle-track{width:42px;height:22px;background:var(--tog);border-radius:11px;position:relative;transition:background .3s}
-    .toggle-knob{width:16px;height:16px;background:var(--togk);border-radius:50%;position:absolute;top:3px;left:3px;transition:transform .3s;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+    .theme-label{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:4px;}
+    
+    .toggle-track{width:40px;height:20px;background:var(--tog);border-radius:10px;position:relative;transition:background .3s}
+    .toggle-knob{width:14px;height:14px;background:var(--togk);border-radius:50%;position:absolute;top:3px;left:3px;transition:transform .3s;}
     [data-theme="light"] .toggle-knob{transform:translateX(20px)}
 
-    .calc-card{width:100%;max-width:400px;background:var(--surface);border-radius:28px;border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;transition:background .3s,border .3s}
+    .calc-card{width:100%;max-width:400px;background:var(--surface);border-radius:28px;border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;transition:background .3s;}
 
-    .display{background:var(--disp);padding:22px 24px 16px;border-bottom:1px solid var(--border);min-height:120px;display:flex;flex-direction:column;justify-content:flex-end;transition:background .3s}
-    .hist-line{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);min-height:18px;text-align:right;margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .main-expr{font-family:'Space Mono',monospace;font-size:14px;color:var(--muted);min-height:20px;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .main-result{font-family:'Space Mono',monospace;font-size:38px;font-weight:700;color:var(--text);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.15;transition:color .3s,font-size .1s}
+    .display{background:var(--disp);padding:22px 24px 16px;border-bottom:1px solid var(--border);min-height:120px;display:flex;flex-direction:column;justify-content:flex-end;}
+    
+    .hist-line, .main-expr, .main-result, .v-calc, .div-box {
+      font-family: 'SFMono-Regular', Consolas, monospace;
+    }
 
-    .strip-btn{width:100%;background:none;border:none;border-bottom:1px solid var(--border);padding:8px 24px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:6px;transition:color .2s,background .2s}
-    .strip-btn:hover{color:var(--accent);background:var(--btn-h)}
+    .hist-line{font-size:12px;color:var(--muted);min-height:18px;text-align:right;margin-bottom:6px;overflow:hidden;}
+    .main-expr{font-size:14px;color:var(--muted);min-height:20px;text-align:right;overflow:hidden;}
+    .main-result{font-size:38px;font-weight:700;color:var(--text);text-align:right;overflow:hidden;line-height:1.15;transition:font-size .1s}
+
+    .strip-btn{width:100%;background:none;border:none;border-bottom:1px solid var(--border);padding:10px 24px;font-family: inherit;font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:6px;transition:color .2s;}
+    .strip-btn:hover{color:var(--accent);}
     .strip-btn .arr{display:inline-block;transition:transform .3s}
     .strip-btn.open .arr{transform:rotate(180deg)}
-    .strip-panel{background:var(--hist);border-bottom:1px solid var(--border);max-height:0;overflow:hidden;transition:max-height .35s ease,background .3s;padding:0}
+    .strip-panel{background:var(--hist);border-bottom:1px solid var(--border);max-height:0;overflow:hidden;transition:max-height .35s ease;}
     .strip-panel.open{max-height:280px;overflow-y:auto}
-    .strip-panel::-webkit-scrollbar{width:4px}
-    .strip-panel::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
     .strip-inner{padding:14px 24px}
 
-    .hist-item{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);padding:4px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:color .2s}
-    .hist-item:last-child{border-bottom:none}
-    .hist-item:hover{color:var(--accent)}
+    .hist-item{font-size:12px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);cursor:pointer;}
     .hist-item span{color:var(--text);font-weight:700}
-    .no-hist{font-size:11px;color:var(--muted);text-align:center;padding:4px 0;font-style:italic}
-
-    .armed-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;font-family:'Syne',sans-serif}
-    .armed-ph{font-size:11px;color:var(--muted);text-align:center;font-style:italic}
-
-    .v-calc{font-family:'Space Mono',monospace;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
-    .v-row{display:flex;align-items:center;gap:6px;justify-content:flex-end}
-    .v-sym{color:var(--accent);font-weight:700;font-size:18px;min-width:20px;text-align:center}
-    .v-num{font-size:22px;font-weight:700;color:var(--text);letter-spacing:.04em;white-space:pre}
-    .v-line{width:100%;height:2px;background:var(--accent);margin:6px 0 4px;border-radius:2px}
-    .v-res{font-size:26px;font-weight:700;color:var(--accent2)}
-
-    .div-box{font-family:'Space Mono',monospace;color:var(--text);width:100%}
-    .div-head{display:flex;align-items:stretch;margin-bottom:10px}
-    .div-dend{font-size:20px;font-weight:700;padding:4px 12px 4px 0;border-right:2px solid var(--accent);border-bottom:2px solid var(--accent)}
-    .div-right{padding-left:12px;display:flex;flex-direction:column;justify-content:space-between}
-    .div-dsor{font-size:13px;color:var(--muted);padding-bottom:2px}
-    .div-quot{font-size:20px;font-weight:700;color:var(--accent2);border-bottom:2px solid var(--accent);padding-bottom:2px}
-    .div-step{margin-bottom:8px;padding:6px 10px;background:var(--surface2);border-radius:8px;font-size:13px;line-height:1.8}
-    .div-step .hl{color:var(--text);font-weight:700}
-    .div-step .sub{color:var(--accent)}
-    .div-step .rem{color:var(--accent2);font-weight:700}
-    .div-note{font-size:12px;margin-top:8px;color:var(--accent2);font-family:'Syne',sans-serif}
-    .div-exact{font-size:12px;margin-top:8px;color:var(--accent);font-family:'Syne',sans-serif}
 
     .buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:18px}
-    .btn{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;border:none;border-radius:14px;height:64px;cursor:pointer;transition:background .15s,transform .08s;outline:none}
-    .btn:active{transform:scale(.96)}
+    .btn{font-family: inherit;font-size:17px;font-weight:700;border:none;border-radius:14px;height:62px;cursor:pointer;transition:background .15s,transform .08s;outline:none}
+    .btn:active{transform:scale(.95)}
     .btn-num{background:var(--btn);color:var(--text)}
     .btn-num:hover{background:var(--btn-h)}
     .btn-op{background:var(--op);color:var(--accent)}
     .btn-op:hover{background:var(--op-h)}
     .btn-cl{background:var(--cl);color:var(--cl-c)}
-    .btn-cl:hover{background:var(--cl-h)}
-    .btn-eq{background:var(--eq);color:#fff;box-shadow:0 4px 20px rgba(124,106,247,.3)}
-    .btn-eq:hover{background:var(--eq-h)}
+    .btn-eq{background:var(--eq);color:#fff;box-shadow:0 4px 15px rgba(124,106,247,.2)}
     .btn-zero{grid-column:span 2}
-    .btn-sp{background:var(--surface2);color:var(--muted);font-size:13px}
-    .btn-sp:hover{background:var(--btn-h);color:var(--text)}
 
-    @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
-    .shake{animation:shake .35s ease}
+    /* Rodapé com Créditos */
+    .footer-credits {
+      margin-top: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      opacity: 0.8;
+    }
 
-    .cookie{position:fixed;bottom:0;left:0;right:0;background:var(--ck);border-top:1px solid var(--ckb);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 -4px 24px rgba(0,0,0,.15);z-index:999;transition:background .3s;flex-wrap:wrap}
+    .cookie{position:fixed;bottom:0;left:0;right:0;background:var(--ck);border-top:1px solid var(--ckb);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:999;flex-wrap:wrap}
     .cookie-text{font-size:12px;color:var(--muted);flex:1;min-width:180px}
-    .cookie-text strong{color:var(--text)}
-    .cookie-text a{color:var(--accent)}
-    .cookie-btns{display:flex;gap:8px;flex-shrink:0}
-    .ck-btn{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;padding:8px 16px;border-radius:10px;border:none;cursor:pointer;transition:opacity .2s}
-    .ck-btn:hover{opacity:.85}
-    .ck-accept{background:var(--eq);color:#fff}
-    .ck-decline{background:var(--op);color:var(--accent)}
+    .ck-btn{font-family: inherit;font-size:11px;font-weight:700;padding:8px 16px;border-radius:10px;border:none;cursor:pointer;}
 
-    @media(max-width:440px){.btn{height:56px;font-size:14px}.main-result{font-size:30px}}
+    @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+    .shake{animation:shake .3s ease-in-out}
   </style>
 </head>
 <body>
 
 <div class="topbar">
-  <span class="topbar-title">Calculadora</span>
+  <span class="topbar-title">Zonest Calculator</span>
   <div class="theme-toggle" onclick="toggleTheme()">
     <span class="theme-label" id="theme-label">🌙 Escuro</span>
     <div class="toggle-track"><div class="toggle-knob"></div></div>
@@ -140,7 +138,7 @@
   </button>
   <div class="strip-panel" id="hist-panel">
     <div class="strip-inner" id="hist-inner">
-      <div class="no-hist" id="no-hist">Nenhum cálculo ainda.</div>
+      <div class="no-hist" id="no-hist" style="font-size: 11px; color: var(--muted); text-align: center;">Vazio</div>
     </div>
   </div>
 
@@ -149,15 +147,15 @@
   </button>
   <div class="strip-panel" id="armed-panel">
     <div class="strip-inner">
-      <div class="armed-ph" id="armed-ph">Faça um cálculo para ver a conta armada.</div>
+      <div id="armed-ph" style="font-size: 11px; color: var(--muted); text-align: center;">Nenhum cálculo recente.</div>
       <div id="armed-content"></div>
     </div>
   </div>
 
   <div class="buttons">
     <button class="btn btn-cl"  onclick="clearAll()">AC</button>
-    <button class="btn btn-sp"  onclick="toggleSign()">+/−</button>
-    <button class="btn btn-sp"  onclick="percent()">%</button>
+    <button class="btn btn-op"  style="color: var(--muted)" onclick="toggleSign()">+/-</button>
+    <button class="btn btn-op"  style="color: var(--muted)" onclick="percent()">%</button>
     <button class="btn btn-op"  onclick="inputOp('÷')">÷</button>
     <button class="btn btn-num" onclick="inputNum('7')">7</button>
     <button class="btn btn-num" onclick="inputNum('8')">8</button>
@@ -177,125 +175,109 @@
   </div>
 </div>
 
+<div class="footer-credits">
+  By: Derick
+</div>
+
 <div class="cookie" id="cookie">
   <div class="cookie-text">
-    🍪 <strong>Usamos cookies</strong> para personalizar anúncios e melhorar sua experiência.
-    Ao continuar, você concorda com nossa <a href="#">Política de Privacidade</a>.
+    <span>🍪</span> <strong>Usamos cookies</strong> para melhorar sua experiência.
   </div>
   <div class="cookie-btns">
-    <button class="ck-btn ck-decline" onclick="closeCookie()">Recusar</button>
-    <button class="ck-btn ck-accept" onclick="closeCookie()">Aceitar</button>
+    <button class="ck-btn" style="background: var(--op); color: var(--accent)" onclick="closeCookie()">Recusar</button>
+    <button class="ck-btn" style="background: var(--eq); color: #fff" onclick="closeCookie()">Aceitar</button>
   </div>
 </div>
 
 <script>
+  function parseEmojis() {
+    twemoji.parse(document.body, { folder: 'svg', ext: '.svg' });
+  }
+
+  window.onload = parseEmojis;
+
+  function toggleTheme() {
+    const root = document.documentElement;
+    const isDark = root.getAttribute('data-theme') === 'dark';
+    const newTheme = isDark ? 'light' : 'dark';
+    root.setAttribute('data-theme', newTheme);
+    document.getElementById('theme-label').innerHTML = newTheme === 'dark' ? '🌙 Escuro' : '☀️ Claro';
+    parseEmojis();
+  }
+
+  function closeCookie() { document.getElementById('cookie').style.display = 'none'; }
+
+  // Lógica da Calculadora
   var disp = '0', op1 = null, oper = null, justCalc = false;
   var histList = [];
-
-  var resEl  = document.getElementById('main-result');
+  var resEl = document.getElementById('main-result');
   var exprEl = document.getElementById('main-expr');
-  var histLn = document.getElementById('hist-line');
 
   function fmt(n) {
-    if (typeof n !== 'number' || !isFinite(n)) return String(n);
-    var r = Math.round(n * 1e10) / 1e10;
-    var s = String(r);
-    if (s.indexOf('e') !== -1 || s.length > 15) s = parseFloat(r.toPrecision(10)).toString();
-    return s;
+    if (isNaN(n)) return 'Erro';
+    let s = Number(n).toLocaleString('pt-BR', { maximumFractionDigits: 8 });
+    return s.length > 12 ? Number(n).toExponential(5) : s;
   }
 
   function setResult(v) {
     resEl.textContent = v;
-    var l = String(v).length;
-    resEl.style.fontSize = l > 14 ? '19px' : l > 10 ? '25px' : l > 7 ? '31px' : '38px';
+    resEl.style.fontSize = v.length > 10 ? '24px' : '38px';
   }
 
   function inputNum(n) {
-    if (justCalc) { disp = n; op1 = null; oper = null; justCalc = false; }
-    else if (disp === '0' && n !== '.') { disp = n; }
-    else { if (disp.replace(/[-.]/, '').length >= 14) return; disp += n; }
+    if (justCalc) { disp = n; justCalc = false; }
+    else { disp = (disp === '0') ? n : disp + n; }
     setResult(disp);
-    exprEl.textContent = oper !== null ? fmt(op1) + ' ' + oper + ' ' + disp : '';
   }
 
   function inputDecimal() {
-    if (justCalc) { disp = '0.'; justCalc = false; setResult(disp); exprEl.textContent = ''; return; }
-    if (disp.indexOf('.') === -1) { disp += '.'; setResult(disp); }
+    if (!disp.includes('.')) { disp += '.'; setResult(disp); }
   }
 
   function inputOp(op) {
-    if (oper !== null && !justCalc) {
-      var r = compute(op1, parseFloat(disp), oper);
-      histLn.textContent = fmt(op1) + ' ' + oper + ' ' + fmt(parseFloat(disp)) + ' = ' + fmt(r);
-      op1 = r; disp = fmt(r); setResult(disp);
-    } else {
-      op1 = parseFloat(disp);
-    }
-    oper = op; justCalc = false;
+    op1 = parseFloat(disp.replace(',','.'));
+    oper = op;
     exprEl.textContent = fmt(op1) + ' ' + op;
     disp = '0';
   }
 
   function calculate() {
-    if (oper === null || op1 === null) return;
-    var b = parseFloat(disp);
-    if (oper === '÷' && b === 0) {
-      setResult('Erro'); exprEl.textContent = fmt(op1) + ' ÷ 0 ='; histLn.textContent = '';
-      var card = document.getElementById('calc-card');
-      card.classList.add('shake');
-      setTimeout(function(){ card.classList.remove('shake'); }, 400);
-      op1 = null; oper = null; disp = '0'; justCalc = true; return;
+    if (oper === null) return;
+    let b = parseFloat(disp.replace(',','.'));
+    let res = 0;
+    if (oper === '+') res = op1 + b;
+    if (oper === '−') res = op1 - b;
+    if (oper === '×') res = op1 * b;
+    if (oper === '÷') {
+      if (b === 0) {
+        document.getElementById('calc-card').classList.add('shake');
+        setTimeout(() => document.getElementById('calc-card').classList.remove('shake'), 300);
+        setResult('Erro'); return;
+      }
+      res = op1 / b;
     }
-    var result = compute(op1, b, oper);
-    var rStr = fmt(result);
+    let rStr = fmt(res);
     exprEl.textContent = fmt(op1) + ' ' + oper + ' ' + fmt(b) + ' =';
-    histLn.textContent = '';
     setResult(rStr);
     addHistory(fmt(op1), oper, fmt(b), rStr);
-    renderArmed(op1, oper, b, result);
-    disp = rStr; justCalc = true; op1 = null; oper = null;
-  }
-
-  function compute(a, b, op) {
-    if (op === '+') return a + b;
-    if (op === '−') return a - b;
-    if (op === '×') return a * b;
-    if (op === '÷') return a / b;
-    return b;
+    disp = rStr;
+    oper = null;
+    justCalc = true;
   }
 
   function clearAll() {
     disp = '0'; op1 = null; oper = null; justCalc = false;
-    setResult('0'); exprEl.textContent = ''; histLn.textContent = '';
-  }
-
-  function toggleSign() {
-    if (disp === '0') return;
-    disp = disp.charAt(0) === '-' ? disp.slice(1) : '-' + disp;
-    setResult(disp);
-  }
-
-  function percent() {
-    var v = parseFloat(disp) / 100;
-    disp = fmt(v); setResult(disp);
+    setResult('0'); exprEl.textContent = '';
   }
 
   function addHistory(a, op, b, r) {
-    histList.unshift({ expr: a + ' ' + op + ' ' + b, res: r });
-    if (histList.length > 20) histList.pop();
-    var inner = document.getElementById('hist-inner');
+    histList.unshift({ text: `${a} ${op} ${b} = <span>${r}</span>` });
+    const container = document.getElementById('hist-inner');
     document.getElementById('no-hist').style.display = 'none';
-    var old = inner.querySelectorAll('.hist-item');
-    for (var i = 0; i < old.length; i++) old[i].remove();
-    histList.forEach(function(h) {
-      var d = document.createElement('div');
-      d.className = 'hist-item';
-      d.innerHTML = h.expr + ' = <span>' + h.res + '</span>';
-      (function(res){ d.onclick = function() {
-        disp = res; setResult(disp); justCalc = true; op1 = null; oper = null; exprEl.textContent = '';
-      }; })(h.res);
-      inner.appendChild(d);
-    });
+    const div = document.createElement('div');
+    div.className = 'hist-item';
+    div.innerHTML = histList[0].text;
+    container.prepend(div);
   }
 
   function togglePanel(pid, bid) {
@@ -303,106 +285,9 @@
     document.getElementById(bid).classList.toggle('open');
   }
 
-  function openPanel(pid, bid) {
-    document.getElementById(pid).classList.add('open');
-    document.getElementById(bid).classList.add('open');
-  }
+  function toggleSign() { disp = (parseFloat(disp) * -1).toString(); setResult(disp); }
+  function percent() { disp = (parseFloat(disp) / 100).toString(); setResult(disp); }
+</script>
 
-  // ── Conta Armada ──────────────────────────────────────────────────────────
-  function renderArmed(a, op, b, result) {
-    document.getElementById('armed-ph').style.display = 'none';
-    var el = document.getElementById('armed-content');
-    try {
-      if (op === '÷') el.innerHTML = buildDivision(a, b, result);
-      else             el.innerHTML = buildVertical(a, op, b, result);
-    } catch(e) {
-      el.innerHTML = '<div class="armed-ph">Não foi possível montar a conta.</div>';
-    }
-    openPanel('armed-panel', 'armed-btn');
-  }
-
-  function buildVertical(a, op, b, result) {
-    var aS = fmt(a), bS = fmt(b), rS = fmt(result);
-    var w = Math.max(aS.length, bS.length, rS.length);
-    function pad(s) { while (s.length < w) s = '\u00a0' + s; return s; }
-    return '<div class="armed-label">Operação vertical</div>' +
-      '<div class="v-calc">' +
-        '<div class="v-row"><span class="v-sym" style="visibility:hidden">' + op + '</span><span class="v-num">' + pad(aS) + '</span></div>' +
-        '<div class="v-row"><span class="v-sym">' + op + '</span><span class="v-num">' + pad(bS) + '</span></div>' +
-        '<div class="v-line"></div>' +
-        '<div class="v-row"><span class="v-sym" style="visibility:hidden">=</span><span class="v-res">' + rS + '</span></div>' +
-      '</div>';
-  }
-
-  function buildDivision(dividend, divisor, quotient) {
-    var aAbs = Math.abs(dividend);
-    var bAbs = Math.abs(divisor);
-
-    // Fallback for non-integer or too-large divisors
-    if (bAbs === 0 || !Number.isFinite(bAbs) || !Number.isFinite(aAbs)) {
-      return buildSimpleDivision(dividend, divisor, quotient);
-    }
-
-    // For decimals, show simple layout
-    if (!Number.isInteger(bAbs) || !Number.isInteger(aAbs) || aAbs > 999999999) {
-      return buildSimpleDivision(dividend, divisor, quotient);
-    }
-
-    var bInt = Math.floor(bAbs);
-    var dStr = String(Math.floor(aAbs));
-    var stepsHtml = '';
-    var current = 0;
-
-    for (var i = 0; i < dStr.length; i++) {
-      current = current * 10 + parseInt(dStr[i], 10);
-      var q = Math.floor(current / bInt);
-      var sub = q * bInt;
-      var rem = current - sub;
-      var isLast = (i === dStr.length - 1);
-      stepsHtml +=
-        '<div class="div-step">' +
-          '<div>Trago: <span class="hl">' + current + '</span></div>' +
-          '<div>Cabe <span class="hl">' + q + '</span>×&nbsp;<span class="hl">' + bInt + '</span> = <span class="sub">' + sub + '</span></div>' +
-          '<div>Resto: <span class="rem">' + rem + '</span>' + (isLast && rem !== 0 ? ' ← resto final' : '') + '</div>' +
-        '</div>';
-      current = rem;
-    }
-
-    var sign = ((dividend < 0) !== (divisor < 0)) ? '−' : '';
-    var quotInt = Math.floor(Math.abs(quotient));
-    var remainder = Math.floor(aAbs) % bInt;
-    var decNote = '';
-    if (!Number.isInteger(quotient)) {
-      var decStr = (fmt(Math.abs(quotient)).split('.')[1] || '0');
-      decNote = '<div class="div-note">Parte decimal: <strong>.' + decStr + '</strong></div>';
-    }
-
-    return '<div class="armed-label">Divisão armada</div>' +
-      '<div class="div-box">' +
-        '<div class="div-head">' +
-          '<div class="div-dend">' + Math.floor(aAbs) + '</div>' +
-          '<div class="div-right">' +
-            '<div class="div-dsor">÷ ' + bInt + '</div>' +
-            '<div class="div-quot">' + sign + quotInt + '</div>' +
-          '</div>' +
-        '</div>' +
-        '<div>' + stepsHtml + '</div>' +
-        (remainder !== 0
-          ? '<div class="div-note">Resto final: <strong>' + remainder + '</strong></div>'
-          : '<div class="div-exact">✓ Divisão exata</div>') +
-        decNote +
-      '</div>';
-  }
-
-  function buildSimpleDivision(a, b, result) {
-    var aS = fmt(a), bS = fmt(b), rS = fmt(result);
-    return '<div class="armed-label">Divisão</div>' +
-      '<div class="div-box">' +
-        '<div class="div-head">' +
-          '<div class="div-dend">' + aS + '</div>' +
-          '<div class="div-right">' +
-            '<div class="div-dsor">÷ ' + bS + '</div>' +
-            '<div class="div-quot">' + rS + '</div>' +
-          '</div>' +
-        '</div>' +
-        '<div class="div-step">' 
+</body>
+</html>
